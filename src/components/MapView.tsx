@@ -40,6 +40,7 @@ export default function MapView({
 }: MapViewProps) {
   const { geoJson, setGeoJson } = useGeoJson();
   const [isDrawing, setIsDrawing] = useState(false);
+  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
   useEffect(() => {
     if (!drawingMode) {
@@ -99,6 +100,18 @@ export default function MapView({
     }
   }
 
+  const handleViewStateChange = ({ viewState }) => {
+    setViewState(viewState);
+  };
+
+  const totalFeatures = geoJson.features.length;
+  const drawnFeatures = geoJson.features.filter(
+    (f) => f.properties?.guideType !== 'tentative'
+  ).length;
+  const lat = viewState.latitude.toFixed(5);
+  const lng = viewState.longitude.toFixed(5);
+  const zoom = viewState.zoom.toFixed(2);
+
   const finishDrawing = () => {
     setIsDrawing(false);
   };
@@ -156,12 +169,35 @@ export default function MapView({
           />
         </Box>
       )}
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: 24,
+          right: 24,
+          zIndex: 20,
+          background: 'rgba(255,255,255,0.95)',
+          borderRadius: 2,
+          boxShadow: 2,
+          p: 2,
+          minWidth: 220,
+        }}
+      >
+        <Box sx={{ mb: 1 }}>
+          <strong>Map Information</strong>
+        </Box>
+        <Box>Features: {totalFeatures}</Box>
+        <Box>Drawn: {drawnFeatures}</Box>
+        <Box>Lat: {lat}</Box>
+        <Box>Lng: {lng}</Box>
+        <Box>Zoom: {zoom}</Box>
+      </Box>
       <Box sx={{ position: 'absolute', inset: 0, zIndex: 2 }}>
         <DeckGL
           initialViewState={INITIAL_VIEW_STATE}
           controller={true}
           style={{ width: '100%', height: '100%' }}
           layers={layers}
+          onViewStateChange={handleViewStateChange}
         >
           <Map
             reuseMaps
