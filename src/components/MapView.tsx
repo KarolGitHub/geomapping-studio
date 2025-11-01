@@ -11,7 +11,7 @@ import {
   ModifyMode,
 } from 'nebula.gl';
 import DrawToolbar from './DrawToolbar';
-import useGeoJson from '../hooks/useGeoJson';
+
 import { NebulaEditType, NebulaEditTypes } from '../types/nebula';
 
 const MAP_STYLE =
@@ -25,6 +25,8 @@ interface MapViewProps {
   viewState: any;
   setViewState: (vs: any) => void;
   searchMarker?: { longitude: number; latitude: number } | null;
+  geoJson: any;
+  setGeoJson: (data: any) => void;
 }
 
 export default function MapView({
@@ -35,8 +37,9 @@ export default function MapView({
   viewState,
   setViewState,
   searchMarker,
+  geoJson,
+  setGeoJson,
 }: MapViewProps) {
-  const { geoJson, setGeoJson } = useGeoJson();
   const [isDrawing, setIsDrawing] = useState(false);
 
   useEffect(() => {

@@ -19,6 +19,7 @@ interface SidebarProps {
   drawingMode?: boolean;
   setDrawingMode?: (active: boolean) => void;
   onSearch?: (query: string) => void;
+  onExportGeoJson?: () => void;
 }
 
 export default function Sidebar({
@@ -28,6 +29,7 @@ export default function Sidebar({
   drawingMode,
   setDrawingMode,
   onSearch,
+  onExportGeoJson,
 }: SidebarProps) {
   const [showSearch, setShowSearch] = useState(false);
 
@@ -39,7 +41,7 @@ export default function Sidebar({
       PaperProps={{ sx: { top: 64, height: 'calc(100% - 64px)' } }}
     >
       <List sx={{ width: 320 }}>
-        <ListItemButton onClick={() => setShowSearch(s => !s)}>
+        <ListItemButton onClick={() => setShowSearch((s) => !s)}>
           <ListItemIcon>
             <SearchIcon />
           </ListItemIcon>
@@ -74,7 +76,7 @@ export default function Sidebar({
             }
           />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton onClick={onExportGeoJson}>
           <ListItemIcon>
             <ExportIcon />
           </ListItemIcon>
