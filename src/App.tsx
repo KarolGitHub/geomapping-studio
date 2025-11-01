@@ -1,13 +1,21 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import MapView from './components/MapView';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import useMapSearchState from './hooks/useMapSearchState';
+import { INITIAL_VIEW_STATE } from './constants/map';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mode, setMode] = useState('drawPolygon');
   const [drawingMode, setDrawingMode] = useState(false);
+  const {
+    viewState,
+    setViewState,
+    searchMarker,
+    handleSearch,
+  } = useMapSearchState(INITIAL_VIEW_STATE);
 
   return (
     <>
@@ -18,12 +26,16 @@ function App() {
         setMode={setMode}
         drawingMode={drawingMode}
         setDrawingMode={setDrawingMode}
+        onSearch={handleSearch}
       />
       <MapView
         mode={mode}
         setMode={setMode}
         drawingMode={drawingMode}
         setDrawingMode={setDrawingMode}
+        viewState={viewState}
+        setViewState={setViewState}
+        searchMarker={searchMarker}
       />
     </>
   );

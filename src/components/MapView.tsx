@@ -14,14 +14,6 @@ import DrawToolbar from './DrawToolbar';
 import useGeoJson from '../hooks/useGeoJson';
 import { NebulaEditType, NebulaEditTypes } from '../types/nebula';
 
-const INITIAL_VIEW_STATE = {
-  longitude: 19.9449799,
-  latitude: 50.0646501,
-  zoom: 10,
-  pitch: 0,
-  bearing: 0,
-};
-
 const MAP_STYLE =
   'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 
@@ -30,6 +22,9 @@ interface MapViewProps {
   setMode: (mode: string) => void;
   drawingMode: boolean;
   setDrawingMode: (drawing: boolean) => void;
+  viewState: any;
+  setViewState: (vs: any) => void;
+  searchMarker?: { longitude: number; latitude: number } | null;
 }
 
 export default function MapView({
@@ -37,10 +32,12 @@ export default function MapView({
   setMode,
   drawingMode,
   setDrawingMode,
+  viewState,
+  setViewState,
+  searchMarker,
 }: MapViewProps) {
   const { geoJson, setGeoJson } = useGeoJson();
   const [isDrawing, setIsDrawing] = useState(false);
-  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
 
   useEffect(() => {
     if (!drawingMode) {
@@ -193,10 +190,39 @@ export default function MapView({
       </Box>
       <Box sx={{ position: 'absolute', inset: 0, zIndex: 2 }}>
         <DeckGL
-          initialViewState={INITIAL_VIEW_STATE}
+          initialViewState={viewState}
+          viewState={viewState}
           controller={true}
           style={{ width: '100%', height: '100%' }}
-          layers={layers}
+          layers={
+            searchMarker
+              ? [
+                  ...layers,
+                  new EditableGeoJsonLayer({
+                    id: 'search-marker',
+                    data: {
+                      type: 'FeatureCollection',
+                      features: [
+                        {
+                          type: 'Feature',
+                          geometry: {
+                            type: 'Point',
+                            coordinates: [
+                              searchMarker.longitude,
+                              searchMarker.latitude,
+                            ],
+                          },
+                          properties: {},
+                        },
+                      ],
+                    },
+                    getPointRadius: 12,
+                    getFillColor: [255, 0, 0, 200],
+                    pickable: false,
+                  }),
+                ]
+              : layers
+          }
           onViewStateChange={handleViewStateChange}
         >
           <Map

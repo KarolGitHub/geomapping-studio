@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -9,6 +10,7 @@ import LoadIcon from '@mui/icons-material/CloudDownload';
 import TableIcon from '@mui/icons-material/TableChart';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
+import SearchBar from './SearchBar';
 
 interface SidebarProps {
   open: boolean;
@@ -16,6 +18,7 @@ interface SidebarProps {
   setMode?: (mode: string) => void;
   drawingMode?: boolean;
   setDrawingMode?: (active: boolean) => void;
+  onSearch?: (query: string) => void;
 }
 
 export default function Sidebar({
@@ -24,7 +27,10 @@ export default function Sidebar({
   setMode,
   drawingMode,
   setDrawingMode,
+  onSearch,
 }: SidebarProps) {
+  const [showSearch, setShowSearch] = useState(false);
+
   return (
     <Drawer
       anchor='left'
@@ -33,7 +39,7 @@ export default function Sidebar({
       PaperProps={{ sx: { top: 64, height: 'calc(100% - 64px)' } }}
     >
       <List sx={{ width: 320 }}>
-        <ListItemButton>
+        <ListItemButton onClick={() => setShowSearch(s => !s)}>
           <ListItemIcon>
             <SearchIcon />
           </ListItemIcon>
@@ -46,6 +52,7 @@ export default function Sidebar({
             }
           />
         </ListItemButton>
+        {showSearch && <SearchBar onSearch={onSearch ?? (() => {})} />}
         <ListItemButton
           onClick={() => {
             if (drawingMode) {
