@@ -1,4 +1,3 @@
-import React from 'react';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -8,16 +7,24 @@ import DrawIcon from '@mui/icons-material/Gesture';
 import ExportIcon from '@mui/icons-material/Download';
 import LoadIcon from '@mui/icons-material/CloudDownload';
 import TableIcon from '@mui/icons-material/TableChart';
-// ...existing code...
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 
 interface SidebarProps {
   open: boolean;
   onClose: () => void;
+  setMode?: (mode: string) => void;
+  drawingMode?: boolean;
+  setDrawingMode?: (active: boolean) => void;
 }
 
-export default function Sidebar({ open, onClose }: SidebarProps) {
+export default function Sidebar({
+  open,
+  onClose,
+  setMode,
+  drawingMode,
+  setDrawingMode,
+}: SidebarProps) {
   return (
     <Drawer
       anchor='left'
@@ -39,12 +46,22 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
             }
           />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton
+          onClick={() => {
+            if (drawingMode) {
+              setDrawingMode && setDrawingMode(false);
+            } else {
+              setMode && setMode('drawPolygon');
+              setDrawingMode && setDrawingMode(true);
+            }
+          }}
+          sx={{ color: drawingMode ? 'red' : 'inherit' }}
+        >
           <ListItemIcon>
-            <DrawIcon />
+            <DrawIcon sx={{ color: drawingMode ? 'red' : 'inherit' }} />
           </ListItemIcon>
           <ListItemText
-            primary='Draw Polygon'
+            primary={drawingMode ? 'Exit Drawing Mode' : 'Draw Polygon'}
             secondary={
               <Typography variant='body2'>Draw shapes on map</Typography>
             }

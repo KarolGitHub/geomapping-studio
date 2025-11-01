@@ -1,4 +1,3 @@
-import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -7,7 +6,7 @@ import Typography from '@mui/material/Typography';
 
 export default function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
   return (
-    <AppBar position='fixed' color='primary' sx={{ zIndex: 1300 }}>
+    <AppBar position='fixed' color='primary' sx={{ zIndex: 10 }}>
       <Toolbar>
         <IconButton
           edge='start'

@@ -1,18 +1,30 @@
-import React from 'react';
-
+import { useState } from 'react';
 import './App.css';
 import MapView from './components/MapView';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 
 function App() {
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mode, setMode] = useState('drawPolygon');
+  const [drawingMode, setDrawingMode] = useState(false);
 
   return (
     <>
       <Navbar onMenuClick={() => setSidebarOpen(true)} />
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <MapView />
+      <Sidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        setMode={setMode}
+        drawingMode={drawingMode}
+        setDrawingMode={setDrawingMode}
+      />
+      <MapView
+        mode={mode}
+        setMode={setMode}
+        drawingMode={drawingMode}
+        setDrawingMode={setDrawingMode}
+      />
     </>
   );
 }
