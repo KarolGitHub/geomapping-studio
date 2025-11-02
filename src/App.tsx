@@ -33,7 +33,7 @@ function App() {
         setDrawingMode={setDrawingMode}
         onSearch={handleSearch}
         onExportGeoJson={() => exportGeoJson(geoJson)}
-        onLoadGeoJsonFromUrl={handleLoadGeoJsonFromUrl}
+        onLoadGeoJsonFromUrl={(url) => handleLoadGeoJsonFromUrl(url, geoJson)}
         geoJsonLoadError={error}
         geoJsonLoadLoading={loading}
         onViewTable={() => setViewMode('table')}
