@@ -1,4 +1,4 @@
-// @ts-nocheck
+//@ts-nocheck
 import React, { useCallback, useState, useEffect } from 'react';
 import { DeckGL } from '@deck.gl/react';
 import Map from 'react-map-gl/mapbox';
@@ -27,6 +27,8 @@ interface MapViewProps {
   searchMarker?: { longitude: number; latitude: number } | null;
   geoJson: any;
   setGeoJson: (data: any) => void;
+  selectedFeatureId: string | null;
+  setSelectedFeatureId: (id: string | null) => void;
 }
 
 export default function MapView({
@@ -39,6 +41,8 @@ export default function MapView({
   searchMarker,
   geoJson,
   setGeoJson,
+  selectedFeatureId,
+  setSelectedFeatureId,
 }: MapViewProps) {
   const [isDrawing, setIsDrawing] = useState(false);
 
@@ -82,20 +86,40 @@ export default function MapView({
 
   const activeMode = drawingMode ? mode : 'modify';
 
-  const layers = [
-    new EditableGeoJsonLayer({
-      id: 'geojson',
-      data: geoJson,
-      mode: modeObjects[activeMode],
-      selectedFeatureIndexes: [],
-      onEdit,
-      pickable: true,
-      getFillColor: [0, 128, 255, 128],
-      getLineColor: [0, 128, 255, 255],
-      getRadius: 5,
-      getLineWidth: 2,
-    }),
-  ];
+  const getFeatureId = (feature: any, idx: number) =>
+    feature?.id ?? String(idx);
+
+  const selectedFeatureIndexes =
+    selectedFeatureId !== null
+      ? geoJson.features
+          .map((f: any, i: number) => getFeatureId(f, i))
+          .reduce<number[]>(
+            (acc, id, idx) => (id === selectedFeatureId ? [...acc, idx] : acc),
+            []
+          )
+      : [];
+
+  const layer = new EditableGeoJsonLayer({
+    id: 'geojson',
+    data: geoJson,
+    mode: modeObjects[activeMode],
+    selectedFeatureIndexes,
+    onEdit,
+    pickable: true,
+    getFillColor: [0, 128, 255, 128],
+    getLineColor: [0, 128, 255, 255],
+    getRadius: 5,
+    getLineWidth: 2,
+    onClick: (info: any) => {
+      if (!isDrawing && info && info.object) {
+        const idx = info.index;
+        const feature = geoJson.features[idx];
+        setSelectedFeatureId(getFeatureId(feature, idx));
+      }
+    },
+  });
+
+  const layers = [layer];
 
   let pointsCount = 0;
   if (geoJson.features.length > 0) {

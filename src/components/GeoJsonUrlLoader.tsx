@@ -33,6 +33,14 @@ export default function GeoJsonUrlLoader({
   const [showSuccess, setShowSuccess] = useState(false);
   const prevLoadingRef = React.useRef<boolean | undefined>(undefined);
 
+  const handleCloseDialog = React.useCallback(() => {
+    setLocalError('');
+    setGeoJsonUrl(
+      'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson'
+    );
+    onClose();
+  }, [onClose]);
+
   React.useEffect(() => {
     if (
       prevLoadingRef.current === true &&
@@ -45,7 +53,7 @@ export default function GeoJsonUrlLoader({
     }
     prevLoadingRef.current = loading;
     setShowError(!!error);
-  }, [error, loading, open]);
+  }, [error, loading, open, handleCloseDialog]);
 
   const handleLoadClick = () => {
     setLocalError('');
@@ -54,14 +62,6 @@ export default function GeoJsonUrlLoader({
       return;
     }
     onLoad(geoJsonUrl);
-  };
-
-  const handleCloseDialog = () => {
-    setLocalError('');
-    setGeoJsonUrl(
-      'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson'
-    );
-    onClose();
   };
 
   return (

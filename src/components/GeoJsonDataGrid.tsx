@@ -11,12 +11,16 @@ interface GeoJsonDataGridProps {
   geoJson: any;
   open: boolean;
   onClose: () => void;
+  selectedFeatureId: string | null;
+  setSelectedFeatureId: (id: string | null) => void;
 }
 
 export default function GeoJsonDataGrid({
   geoJson,
   open,
   onClose,
+  selectedFeatureId,
+  setSelectedFeatureId,
 }: GeoJsonDataGridProps) {
   const features = geoJson?.features || [];
   const columns: GridColDef[] = [];
@@ -27,7 +31,7 @@ export default function GeoJsonDataGrid({
       }
     });
     return {
-      id: idx,
+      id: feature.id ? String(feature.id) : String(idx),
       ...feature.properties,
       geometryType: feature.geometry?.type,
     };
@@ -40,6 +44,11 @@ export default function GeoJsonDataGrid({
     page: 0,
     pageSize: 10,
   });
+
+  const rowSelectionModel = {
+    type: 'include',
+    ids: new Set<string>(selectedFeatureId ? [selectedFeatureId] : []),
+  };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='xl' fullWidth>
@@ -54,15 +63,21 @@ export default function GeoJsonDataGrid({
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        <Box sx={{ height: '80vh', width: '100%', p: 2 }}>
+        <Box sx={{ height: 600, width: '100%' }}>
           <DataGrid
             rows={rows}
             columns={columns}
+            pageSizeOptions={[10, 25, 50]}
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}
-            pageSizeOptions={[10, 25, 50]}
-            autoHeight
-            disableRowSelectionOnClick
+            //@ts-ignore
+            rowSelectionModel={rowSelectionModel}
+            onRowSelectionModelChange={(newRowSelectionModel) => {
+              const idsArray = Array.from(newRowSelectionModel.ids);
+              setSelectedFeatureId(
+                idsArray.length > 0 ? String(idsArray[0]) : null
+              );
+            }}
           />
         </Box>
       </DialogContent>

@@ -17,6 +17,9 @@ function App() {
     features: [],
   });
   const [viewMode, setViewMode] = useState<'map' | 'table'>('map');
+  const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(
+    null
+  );
   const { viewState, setViewState, searchMarker, handleSearch } =
     useMapSearchState(INITIAL_VIEW_STATE);
   const { loading, error, handleLoadGeoJsonFromUrl, exportGeoJson } =
@@ -49,12 +52,16 @@ function App() {
           searchMarker={searchMarker}
           geoJson={geoJson}
           setGeoJson={setGeoJson}
+          selectedFeatureId={selectedFeatureId}
+          setSelectedFeatureId={setSelectedFeatureId}
         />
       ) : (
         <GeoJsonDataGrid
           geoJson={geoJson}
           open={viewMode === 'table'}
           onClose={() => setViewMode('map')}
+          selectedFeatureId={selectedFeatureId}
+          setSelectedFeatureId={setSelectedFeatureId}
         />
       )}
     </>
