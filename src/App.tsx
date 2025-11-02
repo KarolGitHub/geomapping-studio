@@ -5,7 +5,7 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import useMapSearchState from './hooks/useMapSearchState';
 import { INITIAL_VIEW_STATE } from './constants/map';
-import { exportGeoJson } from './services/geoJsonExportService';
+import { useGeoJsonLoader } from './hooks/useGeoJsonLoader';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -17,10 +17,8 @@ function App() {
   });
   const { viewState, setViewState, searchMarker, handleSearch } =
     useMapSearchState(INITIAL_VIEW_STATE);
-
-  const handleExportGeoJson = () => {
-    exportGeoJson(geoJson);
-  };
+  const { loading, error, handleLoadGeoJsonFromUrl, exportGeoJson } =
+    useGeoJsonLoader(setGeoJson);
 
   return (
     <>
@@ -32,7 +30,10 @@ function App() {
         drawingMode={drawingMode}
         setDrawingMode={setDrawingMode}
         onSearch={handleSearch}
-        onExportGeoJson={handleExportGeoJson}
+        onExportGeoJson={() => exportGeoJson(geoJson)}
+        onLoadGeoJsonFromUrl={handleLoadGeoJsonFromUrl}
+        geoJsonLoadError={error}
+        geoJsonLoadLoading={loading}
       />
       <MapView
         mode={mode}

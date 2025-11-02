@@ -11,6 +11,7 @@ import TableIcon from '@mui/icons-material/TableChart';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import SearchBar from './SearchBar';
+import GeoJsonUrlLoader from './GeoJsonUrlLoader';
 
 interface SidebarProps {
   open: boolean;
@@ -20,6 +21,9 @@ interface SidebarProps {
   setDrawingMode?: (active: boolean) => void;
   onSearch?: (query: string) => void;
   onExportGeoJson?: () => void;
+  onLoadGeoJsonFromUrl?: (url: string) => void;
+  geoJsonLoadError?: string;
+  geoJsonLoadLoading?: boolean;
 }
 
 export default function Sidebar({
@@ -30,86 +34,99 @@ export default function Sidebar({
   setDrawingMode,
   onSearch,
   onExportGeoJson,
+  onLoadGeoJsonFromUrl,
+  geoJsonLoadError,
+  geoJsonLoadLoading,
 }: SidebarProps) {
   const [showSearch, setShowSearch] = useState(false);
+  const [geoJsonModalOpen, setGeoJsonModalOpen] = useState(false);
 
   return (
-    <Drawer
-      anchor='left'
-      open={open}
-      onClose={onClose}
-      PaperProps={{ sx: { top: 64, height: 'calc(100% - 64px)' } }}
-    >
-      <List sx={{ width: 320 }}>
-        <ListItemButton onClick={() => setShowSearch((s) => !s)}>
-          <ListItemIcon>
-            <SearchIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary='Search Location'
-            secondary={
-              <Typography variant='body2'>
-                Search coordinates or places
-              </Typography>
-            }
-          />
-        </ListItemButton>
-        {showSearch && <SearchBar onSearch={onSearch ?? (() => {})} />}
-        <ListItemButton
-          onClick={() => {
-            if (drawingMode) {
-              setDrawingMode && setDrawingMode(false);
-            } else {
-              setMode && setMode('drawPolygon');
-              setDrawingMode && setDrawingMode(true);
-            }
-          }}
-          sx={{ color: drawingMode ? 'red' : 'inherit' }}
-        >
-          <ListItemIcon>
-            <DrawIcon sx={{ color: drawingMode ? 'red' : 'inherit' }} />
-          </ListItemIcon>
-          <ListItemText
-            primary={drawingMode ? 'Exit Drawing Mode' : 'Draw Polygon'}
-            secondary={
-              <Typography variant='body2'>Draw shapes on map</Typography>
-            }
-          />
-        </ListItemButton>
-        <ListItemButton onClick={onExportGeoJson}>
-          <ListItemIcon>
-            <ExportIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary='Export to GeoJSON'
-            secondary={
-              <Typography variant='body2'>Download current data</Typography>
-            }
-          />
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemIcon>
-            <LoadIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary='Load GeoJSON from URL'
-            secondary={
-              <Typography variant='body2'>Import external data</Typography>
-            }
-          />
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemIcon>
-            <TableIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary='View Data Table'
-            secondary={
-              <Typography variant='body2'>Open table in dialog</Typography>
-            }
-          />
-        </ListItemButton>
-      </List>
-    </Drawer>
+    <>
+      <Drawer
+        anchor='left'
+        open={open}
+        onClose={onClose}
+        PaperProps={{ sx: { top: 64, height: 'calc(100% - 64px)' } }}
+      >
+        <List sx={{ width: 320 }}>
+          <ListItemButton onClick={() => setShowSearch((s) => !s)}>
+            <ListItemIcon>
+              <SearchIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary='Search Location'
+              secondary={
+                <Typography variant='body2'>
+                  Search coordinates or places
+                </Typography>
+              }
+            />
+          </ListItemButton>
+          {showSearch && <SearchBar onSearch={onSearch ?? (() => {})} />}
+          <ListItemButton
+            onClick={() => {
+              if (drawingMode) {
+                setDrawingMode && setDrawingMode(false);
+              } else {
+                setMode && setMode('drawPolygon');
+                setDrawingMode && setDrawingMode(true);
+              }
+            }}
+            sx={{ color: drawingMode ? 'red' : 'inherit' }}
+          >
+            <ListItemIcon>
+              <DrawIcon sx={{ color: drawingMode ? 'red' : 'inherit' }} />
+            </ListItemIcon>
+            <ListItemText
+              primary={drawingMode ? 'Exit Drawing Mode' : 'Draw Polygon'}
+              secondary={
+                <Typography variant='body2'>Draw shapes on map</Typography>
+              }
+            />
+          </ListItemButton>
+          <ListItemButton onClick={onExportGeoJson}>
+            <ListItemIcon>
+              <ExportIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary='Export to GeoJSON'
+              secondary={
+                <Typography variant='body2'>Download current data</Typography>
+              }
+            />
+          </ListItemButton>
+          <ListItemButton onClick={() => setGeoJsonModalOpen(true)}>
+            <ListItemIcon>
+              <LoadIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary='Load GeoJSON from URL'
+              secondary={
+                <Typography variant='body2'>Import external data</Typography>
+              }
+            />
+          </ListItemButton>
+          <ListItemButton>
+            <ListItemIcon>
+              <TableIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary='View Data Table'
+              secondary={
+                <Typography variant='body2'>Open table in dialog</Typography>
+              }
+            />
+          </ListItemButton>
+        </List>
+      </Drawer>
+      <GeoJsonUrlLoader
+        open={geoJsonModalOpen}
+        onClose={() => setGeoJsonModalOpen(false)}
+        onLoad={onLoadGeoJsonFromUrl ?? (() => {})}
+        error={geoJsonLoadError}
+        loading={geoJsonLoadLoading}
+      />
+    </>
   );
 }

@@ -106,7 +106,7 @@ export default function MapView({
 
   const totalFeatures = geoJson.features.length;
   const drawnFeatures = geoJson.features.filter(
-    (f) => f.properties?.guideType !== 'tentative'
+    (f) => f.properties?.guideType !== undefined
   ).length;
   const lat = viewState.latitude.toFixed(5);
   const lng = viewState.longitude.toFixed(5);
@@ -185,7 +185,7 @@ export default function MapView({
         <Box sx={{ mb: 1 }}>
           <strong>Map Information</strong>
         </Box>
-        <Box>Features: {totalFeatures}</Box>
+        <Box>Total Features: {totalFeatures}</Box>
         <Box>Drawn: {drawnFeatures}</Box>
         <Box>Lat: {lat}</Box>
         <Box>Lng: {lng}</Box>
