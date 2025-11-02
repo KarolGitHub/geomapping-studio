@@ -56,12 +56,19 @@ export default function MapView({
       updatedData: any;
       editType: NebulaEditType;
     }) => {
+      if (editType === NebulaEditTypes.addFeature) {
+        const lastIdx = updatedData.features.length - 1;
+        if (lastIdx >= 0) {
+          updatedData.features[lastIdx].properties = {
+            ...updatedData.features[lastIdx].properties,
+            userDrawn: true,
+          };
+        }
+        setIsDrawing(false);
+      }
       setGeoJson(updatedData);
       if (editType === NebulaEditTypes.addTentativePosition) {
         setIsDrawing(true);
-      }
-      if (editType === NebulaEditTypes.addFeature) {
-        setIsDrawing(false);
       }
     },
     [setGeoJson]
@@ -106,7 +113,7 @@ export default function MapView({
 
   const totalFeatures = geoJson.features.length;
   const drawnFeatures = geoJson.features.filter(
-    (f) => f.properties?.guideType !== undefined
+    (f) => f.properties?.userDrawn === true
   ).length;
   const lat = viewState.latitude.toFixed(5);
   const lng = viewState.longitude.toFixed(5);
