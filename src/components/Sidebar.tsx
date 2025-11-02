@@ -24,6 +24,7 @@ interface SidebarProps {
   onLoadGeoJsonFromUrl?: (url: string) => void;
   geoJsonLoadError?: string;
   geoJsonLoadLoading?: boolean;
+  onViewTable?: () => void;
 }
 
 export default function Sidebar({
@@ -37,6 +38,7 @@ export default function Sidebar({
   onLoadGeoJsonFromUrl,
   geoJsonLoadError,
   geoJsonLoadLoading,
+  onViewTable,
 }: SidebarProps) {
   const [showSearch, setShowSearch] = useState(false);
   const [geoJsonModalOpen, setGeoJsonModalOpen] = useState(false);
@@ -107,7 +109,7 @@ export default function Sidebar({
               }
             />
           </ListItemButton>
-          <ListItemButton>
+          <ListItemButton onClick={() => onViewTable && onViewTable()}>
             <ListItemIcon>
               <TableIcon />
             </ListItemIcon>

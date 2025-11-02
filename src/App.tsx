@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar';
 import useMapSearchState from './hooks/useMapSearchState';
 import { INITIAL_VIEW_STATE } from './constants/map';
 import { useGeoJsonLoader } from './hooks/useGeoJsonLoader';
+import GeoJsonDataGrid from './components/GeoJsonDataGrid';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -15,6 +16,7 @@ function App() {
     type: 'FeatureCollection',
     features: [],
   });
+  const [viewMode, setViewMode] = useState<'map' | 'table'>('map');
   const { viewState, setViewState, searchMarker, handleSearch } =
     useMapSearchState(INITIAL_VIEW_STATE);
   const { loading, error, handleLoadGeoJsonFromUrl, exportGeoJson } =
@@ -34,18 +36,27 @@ function App() {
         onLoadGeoJsonFromUrl={handleLoadGeoJsonFromUrl}
         geoJsonLoadError={error}
         geoJsonLoadLoading={loading}
+        onViewTable={() => setViewMode('table')}
       />
-      <MapView
-        mode={mode}
-        setMode={setMode}
-        drawingMode={drawingMode}
-        setDrawingMode={setDrawingMode}
-        viewState={viewState}
-        setViewState={setViewState}
-        searchMarker={searchMarker}
-        geoJson={geoJson}
-        setGeoJson={setGeoJson}
-      />
+      {viewMode === 'map' ? (
+        <MapView
+          mode={mode}
+          setMode={setMode}
+          drawingMode={drawingMode}
+          setDrawingMode={setDrawingMode}
+          viewState={viewState}
+          setViewState={setViewState}
+          searchMarker={searchMarker}
+          geoJson={geoJson}
+          setGeoJson={setGeoJson}
+        />
+      ) : (
+        <GeoJsonDataGrid
+          geoJson={geoJson}
+          open={viewMode === 'table'}
+          onClose={() => setViewMode('map')}
+        />
+      )}
     </>
   );
 }
