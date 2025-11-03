@@ -200,4 +200,4 @@ const DrawToolbar: React.FC<
   );
 };
 
-export default DrawToolbar;
+export default React.memo(DrawToolbar);

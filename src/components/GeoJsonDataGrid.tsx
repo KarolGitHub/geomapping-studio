@@ -15,13 +15,13 @@ interface GeoJsonDataGridProps {
   setSelectedFeatureId: (id: string | null) => void;
 }
 
-export default function GeoJsonDataGrid({
+const GeoJsonDataGrid: React.FC<GeoJsonDataGridProps> = ({
   geoJson,
   open,
   onClose,
   selectedFeatureId,
   setSelectedFeatureId,
-}: GeoJsonDataGridProps) {
+}) => {
   const features = geoJson?.features || [];
   const columns: GridColDef[] = [];
   const rows = features.map((feature: any, idx: number) => {
@@ -36,9 +36,6 @@ export default function GeoJsonDataGrid({
       geometryType: feature.geometry?.type,
     };
   });
-  if (!columns.find((col) => col.field === 'geometryType')) {
-    columns.push({ field: 'geometryType', headerName: 'Geometry', width: 140 });
-  }
 
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
@@ -47,7 +44,7 @@ export default function GeoJsonDataGrid({
 
   const rowSelectionModel = {
     type: 'include',
-    ids: new Set<string>(selectedFeatureId ? [selectedFeatureId] : []),
+    ids: new Set<string>(selectedFeatureId ? [String(selectedFeatureId)] : []),
   };
 
   return (
@@ -83,4 +80,6 @@ export default function GeoJsonDataGrid({
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default React.memo(GeoJsonDataGrid);

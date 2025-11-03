@@ -27,7 +27,7 @@ interface SidebarProps {
   onViewTable?: () => void;
 }
 
-export default function Sidebar({
+function Sidebar({
   open,
   onClose,
   setMode,
@@ -142,3 +142,5 @@ export default function Sidebar({
     </>
   );
 }
+
+export default React.memo(Sidebar);
