@@ -1,4 +1,6 @@
 import React from 'react';
+import Pagination from '@mui/material/Pagination';
+import PaginationItem from '@mui/material/PaginationItem';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
@@ -47,6 +49,22 @@ const GeoJsonDataGrid: React.FC<GeoJsonDataGridProps> = ({
     ids: new Set<string>(selectedFeatureId ? [String(selectedFeatureId)] : []),
   };
 
+  const CustomPagination = (props: any) => {
+    const { page, pageCount, onPageChange } = props;
+    return (
+      <Pagination
+        color='primary'
+        count={pageCount}
+        page={page + 1}
+        onChange={(_, value) => onPageChange(null, value - 1)}
+        showFirstButton
+        showLastButton
+        renderItem={(item) => <PaginationItem {...item} />}
+        sx={{ mt: 2, mb: 1, display: 'flex', justifyContent: 'center' }}
+      />
+    );
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth='xl' fullWidth>
       <DialogTitle>
@@ -74,6 +92,18 @@ const GeoJsonDataGrid: React.FC<GeoJsonDataGridProps> = ({
               setSelectedFeatureId(
                 idsArray.length > 0 ? String(idsArray[0]) : null
               );
+            }}
+            slots={{ pagination: CustomPagination }}
+            slotProps={{
+              pagination: {
+                page: paginationModel.page,
+                pageCount: Math.max(
+                  1,
+                  Math.ceil(rows.length / paginationModel.pageSize)
+                ),
+                onPageChange: (_: any, value: number) =>
+                  setPaginationModel((prev) => ({ ...prev, page: value })),
+              },
             }}
           />
         </Box>
