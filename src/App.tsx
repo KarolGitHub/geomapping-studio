@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ThemeProvider } from './contexts/ThemeContext';
 import './App.css';
 import MapView from './components/MapView';
 import Navbar from './components/Navbar';
@@ -26,7 +27,7 @@ function App() {
     useGeoJsonLoader(setGeoJson);
 
   return (
-    <>
+    <ThemeProvider>
       <Navbar onMenuClick={() => setSidebarOpen(true)} />
       <Sidebar
         open={sidebarOpen}
@@ -64,7 +65,7 @@ function App() {
           setSelectedFeatureId={setSelectedFeatureId}
         />
       )}
-    </>
+    </ThemeProvider>
   );
 }
 

@@ -1,4 +1,4 @@
 export const appConfig = {
-  defaultColor: '#0080ff',
+  defaultColor: '#87CEEB',
   defaultOpacity: 0.5,
 };
