@@ -48,7 +48,18 @@ const DrawToolbar: React.FC<
 }) => {
   const [showColorPicker, setShowColorPicker] = React.useState(false);
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box
+      sx={(theme) => ({
+        display: 'flex',
+        flexDirection: 'column',
+        gap: { xs: 1, sm: 2 },
+        bgcolor: theme.palette.background.paper,
+        color: theme.palette.text.primary,
+        p: { xs: 1, sm: 2 },
+        minWidth: { xs: 'auto', sm: 220 },
+        maxWidth: { xs: '90vw', sm: 'none' },
+      })}
+    >
       <Typography variant='h6' sx={{ mb: 1 }}>
         Drawing Mode
       </Typography>
@@ -94,27 +105,35 @@ const DrawToolbar: React.FC<
                 />
                 {showColorPicker && (
                   <Box
-                    sx={{
+                    sx={(theme) => ({
                       position: 'absolute',
                       zIndex: 1000,
-                      background: '#fff',
+                      background: theme.palette.background.paper,
                       borderRadius: 2,
                       boxShadow: 4,
+                      border: `1px solid ${theme.palette.divider}`,
                       p: 2,
-                    }}
+                    })}
                   >
                     <Box
-                      sx={{
+                      sx={(theme) => ({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         mb: 1,
-                      }}
+                        color: theme.palette.text.primary,
+                      })}
                     >
-                      <Typography variant='subtitle1'>Colors</Typography>
+                      <Typography
+                        variant='subtitle1'
+                        sx={(theme) => ({ color: theme.palette.text.primary })}
+                      >
+                        Colors
+                      </Typography>
                       <IconButton
                         size='small'
                         onClick={() => setShowColorPicker(false)}
+                        sx={(theme) => ({ color: theme.palette.text.primary })}
                       >
                         <CloseIcon fontSize='small' />
                       </IconButton>

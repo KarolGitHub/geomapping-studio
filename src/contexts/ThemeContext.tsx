@@ -43,7 +43,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   }, [isDarkMode]);
 
   const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
+    setIsDarkMode((prev: boolean) => {
+      setTimeout(() => {
+        window.location.reload();
+      }, 0);
+      return !prev;
+    });
   };
 
   const theme = createTheme({

@@ -49,9 +49,19 @@ export default function Sidebar({
         anchor='left'
         open={open}
         onClose={onClose}
-        PaperProps={{ sx: { top: 64, height: 'calc(100% - 64px)' } }}
+        PaperProps={{
+          sx: {
+            top: { xs: 56, sm: 64 },
+            height: { xs: 'calc(100% - 56px)', sm: 'calc(100% - 64px)' },
+          },
+        }}
       >
-        <List sx={{ width: 320 }}>
+        <List
+          sx={{
+            width: { xs: '80vw', sm: 320 },
+            p: { xs: 1, sm: 2 },
+          }}
+        >
           <ListItemButton onClick={() => setShowSearch((s) => !s)}>
             <ListItemIcon>
               <SearchIcon />

@@ -69,7 +69,13 @@ export default function GeoJsonUrlLoader({
       <Dialog
         open={open}
         onClose={handleCloseDialog}
-        PaperProps={{ sx: { minWidth: 640 } }}
+        PaperProps={{
+          sx: {
+            minWidth: { xs: '90vw', sm: 640 },
+            maxWidth: { xs: '95vw', sm: 700 },
+            m: { xs: 1, sm: 3 },
+          },
+        }}
       >
         <DialogTitle>Load GeoJSON from URL</DialogTitle>
         <DialogContent>

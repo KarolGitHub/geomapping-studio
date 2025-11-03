@@ -5,6 +5,7 @@ import { DeckGL } from '@deck.gl/react';
 import Map from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Box from '@mui/material/Box';
+import { useTheme } from '../contexts/ThemeContext';
 import {
   EditableGeoJsonLayer,
   DrawPolygonMode,
@@ -15,8 +16,9 @@ import DrawToolbar from './DrawToolbar';
 
 import { NebulaEditType, NebulaEditTypes } from '../types/nebula';
 
-const MAP_STYLE =
+const LIGHT_MAP_STYLE =
   'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+const DARK_MAP_STYLE = 'mapbox://styles/mapbox/dark-v11';
 
 interface MapViewProps {
   mode: string;
@@ -48,6 +50,7 @@ export default function MapView({
   const [isDrawing, setIsDrawing] = useState(false);
   const [color, setColor] = useState(appConfig.defaultColor);
   const [opacity, setOpacity] = useState(appConfig.defaultOpacity);
+  const { isDarkMode } = useTheme();
 
   useEffect(() => {
     if (!drawingMode) {
@@ -223,16 +226,18 @@ export default function MapView({
     >
       {drawingMode && (
         <Box
-          sx={{
+          sx={(theme) => ({
             position: 'absolute',
-            top: 80,
-            right: 16,
+            top: { xs: 72, sm: 80 },
+            right: { xs: 8, sm: 16 },
             zIndex: 10,
-            background: 'rgba(255,255,255,0.95)',
+            background: theme.palette.background.paper,
             borderRadius: 2,
             boxShadow: 2,
-            p: 2,
-          }}
+            p: { xs: 1, sm: 2 },
+            minWidth: { xs: 'auto', sm: 220 },
+            maxWidth: { xs: '90vw', sm: 'none' },
+          })}
         >
           <DrawToolbar
             mode={mode}
@@ -248,26 +253,37 @@ export default function MapView({
         </Box>
       )}
       <Box
-        sx={{
+        sx={(theme) => ({
           position: 'absolute',
-          bottom: 24,
-          right: 24,
+          bottom: { xs: 8, sm: 24 },
+          right: { xs: 8, sm: 24 },
           zIndex: 20,
-          background: 'rgba(255,255,255,0.95)',
+          background: theme.palette.background.paper,
           borderRadius: 2,
           boxShadow: 2,
-          p: 2,
-          minWidth: 220,
-        }}
+          p: { xs: 1, sm: 2 },
+          minWidth: { xs: 'auto', sm: 220 },
+          maxWidth: { xs: '90vw', sm: 'none' },
+        })}
       >
-        <Box sx={{ mb: 1 }}>
+        <Box sx={(theme) => ({ mb: 1, color: theme.palette.text.primary })}>
           <strong>Map Information</strong>
         </Box>
-        <Box>Total Features: {totalFeatures}</Box>
-        <Box>Drawn: {drawnFeatures}</Box>
-        <Box>Lat: {lat}</Box>
-        <Box>Lng: {lng}</Box>
-        <Box>Zoom: {zoom}</Box>
+        <Box sx={(theme) => ({ color: theme.palette.text.primary })}>
+          Total Features: {totalFeatures}
+        </Box>
+        <Box sx={(theme) => ({ color: theme.palette.text.primary })}>
+          Drawn: {drawnFeatures}
+        </Box>
+        <Box sx={(theme) => ({ color: theme.palette.text.primary })}>
+          Lat: {lat}
+        </Box>
+        <Box sx={(theme) => ({ color: theme.palette.text.primary })}>
+          Lng: {lng}
+        </Box>
+        <Box sx={(theme) => ({ color: theme.palette.text.primary })}>
+          Zoom: {zoom}
+        </Box>
       </Box>
       <Box sx={{ position: 'absolute', inset: 0, zIndex: 2 }}>
         <DeckGL
@@ -308,7 +324,7 @@ export default function MapView({
         >
           <Map
             reuseMaps
-            mapStyle={MAP_STYLE}
+            mapStyle={isDarkMode ? DARK_MAP_STYLE : LIGHT_MAP_STYLE}
             style={{ width: '100%', height: '100%' }}
             attributionControl={true}
             width='100%'
