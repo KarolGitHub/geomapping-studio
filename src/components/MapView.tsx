@@ -1,5 +1,6 @@
 //@ts-nocheck
 import React, { useCallback, useState, useEffect } from 'react';
+import { appConfig } from '../config/appConfig';
 import { DeckGL } from '@deck.gl/react';
 import Map from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -45,6 +46,8 @@ export default function MapView({
   setSelectedFeatureId,
 }: MapViewProps) {
   const [isDrawing, setIsDrawing] = useState(false);
+  const [color, setColor] = useState(appConfig.defaultColor);
+  const [opacity, setOpacity] = useState(appConfig.defaultOpacity);
 
   useEffect(() => {
     if (!drawingMode) {
@@ -63,9 +66,20 @@ export default function MapView({
       if (editType === NebulaEditTypes.addFeature) {
         const lastIdx = updatedData.features.length - 1;
         if (lastIdx >= 0) {
-          updatedData.features[lastIdx].properties = {
-            ...updatedData.features[lastIdx].properties,
+          const feature = updatedData.features[lastIdx];
+
+          feature.properties = {
+            ...feature.properties,
             userDrawn: true,
+            color,
+            opacity,
+            createdAt: new Date().toISOString(),
+            pointCount:
+              feature.geometry.type === 'Polygon'
+                ? feature.geometry.coordinates[0].length - 1
+                : feature.geometry.type === 'LineString'
+                ? feature.geometry.coordinates.length
+                : 1,
           };
         }
         setIsDrawing(false);
@@ -75,7 +89,7 @@ export default function MapView({
         setIsDrawing(true);
       }
     },
-    [setGeoJson]
+    [setGeoJson, color, opacity]
   );
 
   const modeObjects = {
@@ -106,8 +120,29 @@ export default function MapView({
     selectedFeatureIndexes,
     onEdit,
     pickable: true,
-    getFillColor: [0, 128, 255, 128],
-    getLineColor: [0, 128, 255, 255],
+    getFillColor: (f) => {
+      const c = f.properties?.color || '#0080ff';
+      const o = f.properties?.opacity ?? 0.5;
+      const rgb = c.startsWith('#')
+        ? [
+            parseInt(c.slice(1, 3), 16),
+            parseInt(c.slice(3, 5), 16),
+            parseInt(c.slice(5, 7), 16),
+          ]
+        : [0, 128, 255];
+      return [...rgb, Math.round(o * 255)];
+    },
+    getLineColor: (f) => {
+      const c = f.properties?.color || '#0080ff';
+      const rgb = c.startsWith('#')
+        ? [
+            parseInt(c.slice(1, 3), 16),
+            parseInt(c.slice(3, 5), 16),
+            parseInt(c.slice(5, 7), 16),
+          ]
+        : [0, 128, 255];
+      return [...rgb, 255];
+    },
     getRadius: 5,
     getLineWidth: 2,
     onClick: (info: any) => {
@@ -115,6 +150,14 @@ export default function MapView({
         const idx = info.index;
         const feature = geoJson.features[idx];
         setSelectedFeatureId(getFeatureId(feature, idx));
+        if (mode === 'modify') {
+          feature.properties = {
+            ...feature.properties,
+            color,
+            opacity,
+          };
+          setGeoJson({ ...geoJson });
+        }
       }
     },
   });
@@ -197,6 +240,10 @@ export default function MapView({
             pointsCount={pointsCount}
             drawingActions={drawingActions}
             drawingMode={isDrawing}
+            color={color}
+            setColor={setColor}
+            opacity={opacity}
+            setOpacity={setOpacity}
           />
         </Box>
       )}
