@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { ThemeProvider } from './contexts/ThemeContext';
 import './App.css';
-import MapView from './components/MapView';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import useMapSearchState from './hooks/useMapSearchState';
 import { INITIAL_VIEW_STATE } from './constants/map';
 import { useGeoJsonLoader } from './hooks/useGeoJsonLoader';
 import GeoJsonDataGrid from './components/GeoJsonDataGrid';
+const MapView = lazy(() => import('./components/MapView'));
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -43,19 +43,27 @@ function App() {
         onViewTable={() => setViewMode('table')}
       />
       {viewMode === 'map' ? (
-        <MapView
-          mode={mode}
-          setMode={setMode}
-          drawingMode={drawingMode}
-          setDrawingMode={setDrawingMode}
-          viewState={viewState}
-          setViewState={setViewState}
-          searchMarker={searchMarker}
-          geoJson={geoJson}
-          setGeoJson={setGeoJson}
-          selectedFeatureId={selectedFeatureId}
-          setSelectedFeatureId={setSelectedFeatureId}
-        />
+        <Suspense
+          fallback={
+            <div style={{ textAlign: 'center', marginTop: 40 }}>
+              Loading map...
+            </div>
+          }
+        >
+          <MapView
+            mode={mode}
+            setMode={setMode}
+            drawingMode={drawingMode}
+            setDrawingMode={setDrawingMode}
+            viewState={viewState}
+            setViewState={setViewState}
+            searchMarker={searchMarker}
+            geoJson={geoJson}
+            setGeoJson={setGeoJson}
+            selectedFeatureId={selectedFeatureId}
+            setSelectedFeatureId={setSelectedFeatureId}
+          />
+        </Suspense>
       ) : (
         <GeoJsonDataGrid
           geoJson={geoJson}

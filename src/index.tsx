@@ -1,8 +1,18 @@
-import { StrictMode } from 'react';
+import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+const mapboxToken = process.env.REACT_APP_MAPBOX_TOKEN;
+if (mapboxToken) {
+  const link = document.createElement('link');
+  link.rel = 'preload';
+  link.as = 'fetch';
+  link.crossOrigin = '';
+  link.href = `https://api.mapbox.com/styles/v1/mapbox/dark-v11?access_token=${mapboxToken}`;
+  document.head.appendChild(link);
+}
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
